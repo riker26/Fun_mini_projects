@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Quote Generator</title>
+</head>
+<body>
+    <h1>Random Quote Generator</h1>
+    <p id="quote"></p>
+    <input type="text" id="new-quote" placeholder="Enter a new quote">
+    <button onclick="addQuote()">Add Quote</button>
+    <button onclick="fetchQuote()">Generate Random Quote</button>
+    <script>
+        // Function to fetch and display a random quote
+        function fetchQuote() {
+            fetch('/quote')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('quote').textContent = data.quote;
+                });
+        }
+
+        // Function to add a new quote
+        function addQuote() {
+            const newQuote = document.getElementById('new-quote').value;
+            if (newQuote) {
+                fetch('/quote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ quote: newQuote })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('new-quote').value = '';
+                    fetchQuote(); // Refresh the quote display
+                });
+            } else {
+                alert('Please enter a quote.');
+            }
+        }
+
+        // Fetch a quote when the page loads
+        window.onload = fetchQuote;
+    </script>
+</body>
+</html>
